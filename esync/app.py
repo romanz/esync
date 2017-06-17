@@ -17,6 +17,8 @@ class App:
         self.dirs = config['dirs'] or []
         self.out_dir = config['blobs']
         self.store = store.open_store(config['store'])
+        self.gpg_identity = config['gpg']['identity']
+        subprocess.check_call(['gpg2', '-k', self.gpg_identity])
         self.prepare_dirs()
         self.sync_blob_ids()
 
@@ -58,7 +60,7 @@ class App:
     def _encrypt(self, path):
         out = tempfile.NamedTemporaryFile(mode='wb', dir=self.out_dir,
                                           prefix='blob-', delete=False)
-        args = ['gpg2', '--encrypt', '-r', 'roman-backup']
+        args = ['gpg2', '--encrypt', '-r', self.gpg_identity]
         subprocess.check_call(args=args,
                               stdin=open(path, 'rb'), stdout=out.file)
         return out.name
