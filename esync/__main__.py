@@ -16,10 +16,7 @@ def main():
 
     a = app.App(config)
     for path in a.scan():
-        try:
-            a.add(path)
-        except Exception as e:  # pylint: disable=broad-except
-            log.exception('failed to add {}: {}', path, e)
+        a.add(path)
     a.commit()
 
 
